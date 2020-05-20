@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/backend/item")
 public class ItemController {
@@ -29,7 +31,7 @@ public class ItemController {
     //分页查询商品信息
     @RequestMapping("selectTbItemAllByPage")
     public Result selectTbItemAllByPage(@RequestParam(defaultValue = "1") Integer page,
-                                        @RequestParam(defaultValue = "2") Integer rows){
+                                        @RequestParam(defaultValue = "3") Integer rows){
 
         PageResult pageResult = itemServiceFeignClient.selectTbItemAllByPage(page,rows);
 
@@ -39,5 +41,36 @@ public class ItemController {
 
         return Result.error("查无结果");
 
+    }
+
+    //添加
+    @RequestMapping("/insertTbItem")
+    public Result insertTbItem(TbItem tbItem,String desc,String itemParams){
+        Integer insertTbitemNum = itemServiceFeignClient.insertTbItem(tbItem,desc,itemParams);
+        if(insertTbitemNum==3){
+            return Result.ok();
+        }
+        return Result.error("添加失败");
+    }
+
+    //预更新数据
+    @RequestMapping("/preUpdateItem")
+    public Result preUpdateItem(Long itemId){
+        Map<String,Object> map = itemServiceFeignClient.preUpdateItem(itemId);
+        if(map!=null){
+            return Result.ok(map);
+        }
+        return Result.error("没有查询到数据");
+    }
+
+    //删除
+    @RequestMapping("deleteItemById")
+    public Result deleteItemById(Long itemId){
+        Integer num = itemServiceFeignClient.deleteItemById(itemId);
+
+        if(num==1){
+            return Result.ok();
+        }
+        return Result.error("删除失败");
     }
 }

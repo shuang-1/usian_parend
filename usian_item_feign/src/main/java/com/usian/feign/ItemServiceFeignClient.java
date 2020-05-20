@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
+import java.util.Map;
 
 @FeignClient("usian-item-service")
 public interface ItemServiceFeignClient {
@@ -48,4 +49,12 @@ public interface ItemServiceFeignClient {
      */
     @RequestMapping("/service/item/insertTbItem")
     Integer insertTbItem(@RequestBody TbItem tbItem, @RequestParam String desc, @RequestParam String itemParams);
+
+    //预修改数据
+    @RequestMapping("/service/item/preUpdateItem")
+    Map<String,Object> preUpdateItem(@RequestParam Long id);
+
+    //删除
+    @RequestMapping("/service/item/deleteItemById")
+    Integer deleteItemById(@RequestParam Long itemId);
 }
