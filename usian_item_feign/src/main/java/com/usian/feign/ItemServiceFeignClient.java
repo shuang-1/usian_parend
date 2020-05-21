@@ -16,45 +16,36 @@ import java.util.Map;
 @FeignClient("usian-item-service")
 public interface ItemServiceFeignClient {
 
-    @RequestMapping("/service/item/selectItemInfo")
-    TbItem selectItemInfo(@RequestParam Long itemId);
-
-
-    //分页查询商品数据
-    @RequestMapping("/service/item/selectTbItemAllByPage")
-    PageResult selectTbItemAllByPage(@RequestParam Integer page, @RequestParam Integer rows);
-
-    /**
-     * 根据id查询商品的类目
-     * @param id
-     * @return
-     */
     @RequestMapping("/service/itemCat/selectItemCategoryByParentId")
     List<TbItemCat> selectItemCategoryByParentId(@RequestParam Long id);
 
-    /**
-     * 查询商品规格参数
-     * @param itemCatId
-     * @return
-     */
-    @RequestMapping("/service/itemParam/selectItemParamByItemCatId/{itemCatId}")
-    TbItemParam selectItemParamByItemCatId(@PathVariable Long itemCatId);
+    @RequestMapping("service/item/selectItemInfo")
+    TbItem selectItemInfo(@RequestParam Long itemId);
 
-    /**
-     * 添加商品
-     * @param tbItem
-     * @param desc
-     * @param itemParams
-     * @return
-     */
+    @RequestMapping("/service/item/selectTbItemAllByPage")
+    PageResult selectTbItemAllByPage(@RequestParam Integer page, @RequestParam Integer rows);
+
     @RequestMapping("/service/item/insertTbItem")
     Integer insertTbItem(@RequestBody TbItem tbItem, @RequestParam String desc, @RequestParam String itemParams);
 
-    //预修改数据
-    @RequestMapping("/service/item/preUpdateItem")
-    Map<String,Object> preUpdateItem(@RequestParam Long id);
+    @RequestMapping("service/item/preUpdateItem")
+    Map<String, Object> preUpdateItem(@RequestParam Long itemId);
 
-    //删除
     @RequestMapping("/service/item/deleteItemById")
     Integer deleteItemById(@RequestParam Long itemId);
+
+    @RequestMapping("/service/itemParam/selectItemParamByItemCatId/{itemCatId}")
+    TbItemParam selectItemParamByItemCatId(@PathVariable Long itemCatId);
+
+    @RequestMapping("/service/itemParam/selectItemParamAll")
+    PageResult selectItemParamAll(@RequestParam Integer pageNum, @RequestParam Integer rows);
+
+    @RequestMapping("/service/itemParam/selectItemParamByItemCatId2")
+    Integer selectItemParamByItemCatId2(@RequestParam Long itemCatId);
+
+    @RequestMapping("/service/itemParam/insertItemParam")
+    Integer insertItemParam(@RequestParam Long itemCatId, @RequestParam String paramData);
+
+    @RequestMapping("/service/itemParam/deleteItemParamById")
+    Integer deleteItemParamById(@RequestParam Integer id);
 }

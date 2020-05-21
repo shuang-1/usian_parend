@@ -38,8 +38,8 @@ public class ItemController {
 
     //预修改数据
     @RequestMapping("/preUpdateItem")
-    public Map<String,Object> preUpdateItem(@RequestParam Long id){
-        Map<String,Object> map = itemService.preUpdateItem(id);
+    public Map<String,Object> preUpdateItem(@RequestParam Long itemId){
+        Map<String,Object> map = itemService.preUpdateItem(itemId);
         return map;
     }
 
