@@ -3,8 +3,10 @@ package com.usian.controller;
 import com.usian.pojo.TbContentCategory;
 import com.usian.service.ContentCategoryService;
 import com.usian.service.ContentCategoryServiceImpl;
+import com.usian.utils.PageResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -27,12 +29,13 @@ public class ContentCategoryController {
     }
 
     @RequestMapping("/deleteContentCategoryById")
-    public Integer deleteContentCategoryById(Long category){
-        return contentCategoryService.deleteContentCategoryById(category);
+    public Integer deleteContentCategoryById(Long categoryId){
+        return contentCategoryService.deleteContentCategoryById(categoryId);
     }
 
-    @RequestMapping("/service/content/updateContentCategory")
-    public Integer updateContentCategory(Integer id,String name){
+    @RequestMapping("/updateContentCategory")
+    public Integer updateContentCategory(Long id,String name){
         return contentCategoryService.updateContentCategory(id,name);
     }
+
 }

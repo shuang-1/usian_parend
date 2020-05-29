@@ -43,6 +43,12 @@ public class ItemController {
         return map;
     }
 
+    //修改
+    @RequestMapping("/updateTbItem")
+    public Integer updateTbItem(@RequestBody TbItem tbItem, String desc,String itemParams){
+        return itemService.updateTbItem(tbItem,desc,itemParams);
+    }
+
     //删除
     @RequestMapping("/deleteItemById")
     public Integer deleteItemById(@RequestParam Long itemId){

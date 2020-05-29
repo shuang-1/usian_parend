@@ -62,6 +62,16 @@ public class ItemController {
         return Result.error("没有查询到数据");
     }
 
+    //修改
+    @RequestMapping("/updateTbItem")
+    public Result updateTbItem(TbItem tbItem,String desc,String itemParams){
+        Integer num = itemServiceFeignClient.updateTbItem(tbItem,desc,itemParams);
+        if(num==3){
+            return Result.ok();
+        }
+        return Result.error("修改失败");
+    }
+
     //删除
     @RequestMapping("deleteItemById")
     public Result deleteItemById(Long itemId){

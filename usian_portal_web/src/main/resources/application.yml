@@ -1,0 +1,9 @@
+server:
+  port: 8094
+spring:
+  application:
+    name: usian-portal-web
+eureka:
+  client:
+    service-url:
+      defaultZone: http://127.0.0.1:8761/eureka/

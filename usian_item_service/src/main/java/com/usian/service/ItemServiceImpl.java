@@ -100,14 +100,52 @@ public class ItemServiceImpl implements ItemService {
 
         TbItemCat tbItemCat = tbItemCatMapper.selectByPrimaryKey(tbItems.getCid());
 
-        map.put("tbItems",tbItems);
-        map.put("tbItemDesc",tbItemDesc);
-        map.put("tbItemCat",tbItemCat);
+        TbItemParamItemExample tbItemParamItemExample = new TbItemParamItemExample();
+        TbItemParamItemExample.Criteria criteria = tbItemParamItemExample.createCriteria();
+        criteria.andItemIdEqualTo(id);
+        List<TbItemParamItem> tbItemParamItems = tbItemParamItemMapper.selectByExampleWithBLOBs(tbItemParamItemExample);
+        if(tbItemParamItems.size()>0 && tbItemParamItems!=null){
+            map.put("itemParamItem",tbItemParamItems.get(0).getParamData());
+        }
+
+        map.put("item",tbItems);
+        map.put("itemDesc",tbItemDesc.getItemDesc());
+        map.put("itemCat",tbItemCat.getName());
 
         return map;
 
 
+    }
 
+    @Override
+    public Integer updateTbItem(TbItem tbItem, String desc, String itemParams) {
+
+        //补齐商品的数据
+        tbItem.setStatus((byte)1);
+        tbItem.setCreated(new Date());
+        tbItem.setUpdated(new Date());
+        Integer tbitemNum = tbItemMapper.updateByPrimaryKeySelective(tbItem);
+
+        //补齐描述的信息
+        TbItemDesc tbItemDesc = new TbItemDesc();
+        tbItemDesc.setItemId(tbItem.getId());
+        tbItemDesc.setCreated(new Date());
+        tbItemDesc.setUpdated(new Date());
+        tbItemDesc.setItemDesc(desc);
+        Integer tbitemDescNum = tbItemDescMapper.updateByPrimaryKeySelective(tbItemDesc);
+
+        //补全商品规格的数据
+        TbItemParamItemExample tbItemParamItemExample = new TbItemParamItemExample();
+        TbItemParamItemExample.Criteria criteria = tbItemParamItemExample.createCriteria();
+        criteria.andItemIdEqualTo(tbItem.getId());
+        TbItemParamItem tbItemParamItem = new TbItemParamItem();
+        tbItemParamItem.setItemId(tbItem.getId());
+        tbItemParamItem.setCreated(new Date());
+        tbItemParamItem.setUpdated(new Date());
+        tbItemParamItem.setParamData(itemParams);
+        Integer itemParamItemNum = tbItemParamItemMapper.updateByExampleSelective(tbItemParamItem,tbItemParamItemExample);
+
+        return tbitemNum+tbitemDescNum+itemParamItemNum;
     }
 
     @Override
@@ -116,4 +154,5 @@ public class ItemServiceImpl implements ItemService {
         Integer num = tbItemMapper.deleteByPrimaryKey(itemId);
         return num;
     }
+
 }

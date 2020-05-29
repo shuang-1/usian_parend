@@ -15,11 +15,12 @@
         <module>common_utils</module>
         <module>usian_item_service</module>
         <module>usian_item_feign</module>
-        <module>usian_itme_web</module>
         <module>usian_item_web</module>
         <module>usian_content_service</module>
         <module>usian_content_feign</module>
         <module>usian_content_web</module>
+        <module>usian_portal_web</module>
+        <module>common_redis</module>
     </modules>
 
     <!--Spring Boot 父工程-->

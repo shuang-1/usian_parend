@@ -1,6 +1,7 @@
 package com.usian.service;
 
 import com.usian.pojo.TbContentCategory;
+import com.usian.utils.PageResult;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,5 +15,6 @@ public interface ContentCategoryService {
 
     Integer deleteContentCategoryById(Long category);
 
-    Integer updateContentCategory(Integer id, String name);
+    Integer updateContentCategory(Long id, String name);
+
 }

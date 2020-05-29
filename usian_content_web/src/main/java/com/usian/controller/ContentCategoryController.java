@@ -2,6 +2,7 @@ package com.usian.controller;
 
 import com.usian.feign.ContentServiceFeign;
 import com.usian.pojo.TbContentCategory;
+import com.usian.utils.PageResult;
 import com.usian.utils.Result;
 import javafx.scene.Parent;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,15 +42,19 @@ public class ContentCategoryController {
         if(num==1){
             return Result.ok();
         }
+        if(num==0){
+            return Result.error("自己是父节点");
+        }
         return Result.error("删除失败");
     }
 
     @RequestMapping("/updateContentCategory")
-    public Result updateContentCategory(Integer id, String name){
+    public Result updateContentCategory(Long id, String name){
         Integer num = contentServiceFeign.updateContentCategory(id,name);
         if(num==1){
             return Result.ok();
         }
         return Result.error("修改错误");
     }
+
 }
