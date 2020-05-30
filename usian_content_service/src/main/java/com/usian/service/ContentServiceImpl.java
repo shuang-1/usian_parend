@@ -70,13 +70,16 @@ public class ContentServiceImpl implements ContentService {
 
         tbContent.setCreated(new Date());
         tbContent.setUpdated(new Date());
-
-        return tbContentMapper.insertSelective(tbContent);
+        Integer num = tbContentMapper.insertSelective(tbContent);
+        redisClient.hdel(portal_ad_redis_key,AD_CATEGORY_ID.toString());
+        return num;
     }
 
     @Override
     public Integer deleteContentByIds(Long ids) {
-        return tbContentMapper.deleteByPrimaryKey(ids);
+        Integer num = tbContentMapper.deleteByPrimaryKey(ids);
+        redisClient.hdel(portal_ad_redis_key,AD_CATEGORY_ID.toString());
+        return num;
     }
 
     @Override

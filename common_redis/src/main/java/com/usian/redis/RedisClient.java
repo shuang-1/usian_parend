@@ -74,7 +74,7 @@ public class RedisClient {
     }
 
     //删除hash中的数据
-    public long hdel(String key, Object... item){
+    public long hdel(String key, String item){
        return redisTemplate.opsForHash().delete(key,item);
     }
 
