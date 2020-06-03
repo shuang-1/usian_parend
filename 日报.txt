@@ -1,0 +1,49 @@
+2020-06-01
+    1、redis缓存首页大广告
+    2、缓存同步
+    3、ElasticSearch介绍
+        3.1、索引结构
+        3.2、倒排索引
+    4、ElasticSearch的安装
+        4.1、环境的需求
+        4.2、安装ES
+        4.3、配置文件
+        4.4、启动ES
+        4.5、测试
+    5、Kibana的介绍
+    6、安装Kibana
+    7、head的介绍
+    8、安装head
+    9、ES入门
+        9.1、index的管理  创建  删除  修改
+        9.2、mapping的管理  创建  查询  更新  删除
+        9.3、document的管理  创建 post  put  查询  删除
+    10、ES的读写原理
+2020-06-02
+    1、IK分词器
+        1.1、两种模式  ik_smart   ik_max_word
+        1.2、自定义词库
+    2、field的详细介绍   就是怎么指定field的属性
+        2.1、field的属性  type  analyzer   index   includes  excludes
+        2.2、常用的field的类型  text  keyword  date  double
+    3、springboot整合ElasticSearch
+        3.1、ES客户端
+        3.2、搭建工程
+        3.3、索引管理
+            3.3.1、创建索引
+            3.3.2、删除索引
+2020-06-03
+    1、文档的管理
+        1.1、添加文档
+        1.2、批量添加
+        1.3、修改文本
+        1.4、删除文本
+    2、文档搜索
+        2.1、match_all查询  全部查询
+        2.2、分页查询
+        2.3、match查询  单条件查询
+        2.4、multi_match查询   根据一个分词  查询多个字段
+        2.5、boot查询   多条件查询
+        2.6、filter查询  不需要计算相关度分数
+        2.7、highlight查询  高光
+
