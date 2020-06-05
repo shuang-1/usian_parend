@@ -64,4 +64,17 @@ public class SearchItem {
     public void setItem_desc(String item_desc) {
         this.item_desc = item_desc;
     }
+
+    @Override
+    public String toString() {
+        return "SearchItem{" +
+                "id='" + id + '\'' +
+                ", item_title='" + item_title + '\'' +
+                ", item_sell_point='" + item_sell_point + '\'' +
+                ", item_price='" + item_price + '\'' +
+                ", item_image='" + item_image + '\'' +
+                ", item_category_name='" + item_category_name + '\'' +
+                ", item_desc='" + item_desc + '\'' +
+                '}';
+    }
 }

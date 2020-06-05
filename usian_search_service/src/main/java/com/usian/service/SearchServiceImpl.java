@@ -9,17 +9,29 @@ import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
 import org.elasticsearch.action.admin.indices.get.GetIndexRequest;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.index.IndexResponse;
+import org.elasticsearch.action.search.SearchRequest;
+import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.xcontent.XContentType;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
+import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
+import org.elasticsearch.search.fetch.subphase.highlight.HighlightField;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
+import static org.elasticsearch.common.xcontent.XContentType.JSON;
 
 @Service
 @Transactional
@@ -57,7 +69,7 @@ public class SearchServiceImpl implements SearchService {
                 for (int i = 0; i < itemList.size(); i++) {
                     SearchItem searchItem = itemList.get(i);
                     bulkRequest.add(new IndexRequest(ES_INDEX_NAME, ES_TYPE_NAME).source
-                            (JsonUtils.objectToJson(searchItem), XContentType.JSON));
+                            (JsonUtils.objectToJson(searchItem), JSON));
                 }
                 restHighLevelClient.bulk(bulkRequest, RequestOptions.DEFAULT);
                 page++;
@@ -116,7 +128,64 @@ public class SearchServiceImpl implements SearchService {
                 "    }\n" +
                 "    \n" +
                 "  }\n" +
-                "}",XContentType.JSON);
+                "}", JSON);
         restHighLevelClient.indices().create(createIndexRequest,RequestOptions.DEFAULT);
+    }
+
+    @Override
+    public List<SearchItem> selectByq(String q, Long page, Integer pagesize) {
+        try {
+            SearchRequest searchRequest = new SearchRequest(ES_INDEX_NAME).types(ES_TYPE_NAME);
+            SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+            searchSourceBuilder.query(QueryBuilders.multiMatchQuery(q,"item_title","item_sell_point","item_desc","item_category_name"));
+            //分页
+            Long from = (page-1)*pagesize;
+            searchSourceBuilder.from(from.intValue());
+            searchSourceBuilder.size(pagesize);
+            HighlightBuilder highlightBuilder = new HighlightBuilder();
+            //高亮
+            highlightBuilder.preTags("<font color='red'>");
+            highlightBuilder.postTags("</font>");
+            highlightBuilder.field("item_title");
+            searchSourceBuilder.highlighter(highlightBuilder);
+            searchRequest.source(searchSourceBuilder);
+
+            SearchResponse searchResponse = restHighLevelClient.search(searchRequest, RequestOptions.DEFAULT);
+            SearchHit[] hits = searchResponse.getHits().getHits();
+            List<SearchItem> items = new ArrayList<>();
+            for (int i = 0; i < hits.length; i++) {
+                SearchHit hit = hits[i];
+                String sourceAsString = hit.getSourceAsString();
+                SearchItem searchItem = JsonUtils.jsonToPojo(sourceAsString, SearchItem.class);
+
+                Map<String, HighlightField> highlightFields = hit.getHighlightFields();
+                if(highlightFields.get("item_title")!=null){
+                    searchItem.setItem_title(highlightFields.get("item_title").getFragments()[0].toString());
+                }
+                items.add(searchItem);
+            }
+            return items;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public int addDocement(String msg) {
+
+        SearchItem searchItem = searchItemMapper.getItemById(msg);
+        IndexRequest indexRequest = new IndexRequest(ES_INDEX_NAME, ES_TYPE_NAME);
+
+        indexRequest.source(JsonUtils.objectToJson(searchItem), XContentType.JSON);
+
+        IndexResponse indexResponse = null;
+        try {
+            indexResponse = restHighLevelClient.index(indexRequest, RequestOptions.DEFAULT);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        int failed = indexResponse.getShardInfo().getFailed();
+        return failed;
     }
 }

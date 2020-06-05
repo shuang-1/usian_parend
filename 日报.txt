@@ -49,4 +49,7 @@
     1、highlight查询  高光
     2、Elasticsearch集群
     3、usian项目整合Elasticsearch 把数据导入索引库
+2020-06-05
+    1、商品的搜索
+    2、索引库同步
 

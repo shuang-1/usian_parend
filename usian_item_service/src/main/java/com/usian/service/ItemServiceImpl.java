@@ -2,11 +2,14 @@ package com.usian.service;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.usian.mapper.*;
+import com.usian.mapper.TbItemCatMapper;
+import com.usian.mapper.TbItemDescMapper;
+import com.usian.mapper.TbItemMapper;
+import com.usian.mapper.TbItemParamItemMapper;
 import com.usian.pojo.*;
 import com.usian.utils.IDUtils;
 import com.usian.utils.PageResult;
-import com.usian.utils.Result;
+import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +31,9 @@ public class ItemServiceImpl implements ItemService {
     
     @Autowired
     private TbItemParamItemMapper tbItemParamItemMapper;
+
+    @Autowired
+    private AmqpTemplate amqpTemplate;
 
     @Autowired
     private TbItemCatMapper tbItemCatMapper;
@@ -85,6 +91,9 @@ public class ItemServiceImpl implements ItemService {
         tbItemParamItem.setUpdated(date);
         tbItemParamItem.setParamData(itemParams);
         Integer itemParamItemNum = tbItemParamItemMapper.insertSelective(tbItemParamItem);
+
+        //发送amqp消息
+        amqpTemplate.convertAndSend("item_exchange","item.add",itemId);
 
         return tbitemNum+tbitemDescNum+itemParamItemNum;
     }
