@@ -1,9 +1,9 @@
 package com.usian.controller;
 
 import com.usian.pojo.TbItem;
+import com.usian.pojo.TbItemDesc;
 import com.usian.service.ItemService;
 import com.usian.utils.PageResult;
-import com.usian.utils.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -56,5 +56,9 @@ public class ItemController {
         return num;
     }
 
-
+    //查询商品的描述
+    @RequestMapping("/selectItemDescByItemId")
+    public TbItemDesc selectItemDescByItemId(Long itemId){
+        return itemService.selectItemDescByItemId(itemId);
+    }
 }

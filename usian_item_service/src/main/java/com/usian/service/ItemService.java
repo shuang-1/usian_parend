@@ -1,8 +1,8 @@
 package com.usian.service;
 
 import com.usian.pojo.TbItem;
+import com.usian.pojo.TbItemDesc;
 import com.usian.utils.PageResult;
-import com.usian.utils.Result;
 
 import java.util.Map;
 
@@ -19,5 +19,7 @@ public interface ItemService {
     Integer deleteItemById(Long itemId);
 
     Integer updateTbItem(TbItem tbItem, String desc, String itemParams);
+
+    TbItemDesc selectItemDescByItemId(Long itemId);
 }
 

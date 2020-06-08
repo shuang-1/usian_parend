@@ -36,3 +36,10 @@ eureka:
 #配置缓存首页商品分类的 key
 portal_catresult_redis_key: portal_catresult_redis_key
 
+#商品详情
+ITEM_INFO: ITEM_INFO
+BASE: BASE
+DESC: DESC
+PARAM: PARAM
+ITEM_INFO_EXPIRE: 86400
+

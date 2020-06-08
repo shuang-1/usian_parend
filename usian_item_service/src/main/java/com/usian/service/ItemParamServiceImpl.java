@@ -2,14 +2,16 @@ package com.usian.service;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.usian.mapper.TbItemMapper;
+import com.usian.mapper.TbItemParamItemMapper;
 import com.usian.mapper.TbItemParamMapper;
-import com.usian.pojo.TbItem;
-import com.usian.pojo.TbItemExample;
 import com.usian.pojo.TbItemParam;
 import com.usian.pojo.TbItemParamExample;
+import com.usian.pojo.TbItemParamItem;
+import com.usian.pojo.TbItemParamItemExample;
+import com.usian.redis.RedisClient;
 import com.usian.utils.PageResult;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +25,20 @@ public class ItemParamServiceImpl implements ItemParamService {
     @Autowired
     private TbItemParamMapper tbItemParamMapper;
 
+    @Autowired
+    private TbItemParamItemMapper tbItemParamItemMapper;
+
+    @Value("${ITEM_INFO}")
+    private String ITEM_INFO;
+
+    @Value("${PARAM}")
+    private String PARAM;
+
+    @Value("${ITEM_INFO_EXPIRE}")
+    private Integer ITEM_INFO_EXPIRE;
+
+    @Autowired
+    private RedisClient redisClient;
 
     @Override
     public TbItemParam selectItemParamByItemCatId(Long itemCatId) {
@@ -80,6 +96,43 @@ public class ItemParamServiceImpl implements ItemParamService {
     @Override
     public Integer deleteItemParamById(Integer id) {
         return tbItemParamMapper.deleteByPrimaryKey(Long.valueOf(id));
+    }
+
+    @Override
+    public TbItemParamItem selectTbItemParamItemByItemId(Long itemId) {
+        //从redis查询
+        TbItemParamItem tbItemParamItem = (TbItemParamItem) redisClient.get(ITEM_INFO + ":" + itemId + ":" + PARAM);
+        if(tbItemParamItem!=null){
+            return tbItemParamItem;
+        }
+
+        if(redisClient.setnx("SETNX_ITEM_PARAM_KEY"+":"+itemId,itemId,30)){
+            //如果没有从数据库查询
+            TbItemParamItemExample tbItemParamItemExample = new TbItemParamItemExample();
+            TbItemParamItemExample.Criteria criteria = tbItemParamItemExample.createCriteria();
+            criteria.andItemIdEqualTo(itemId);
+            List<TbItemParamItem> tbItemParamItems = tbItemParamItemMapper.selectByExampleWithBLOBs(tbItemParamItemExample);
+            //穿透问题
+            if(tbItemParamItems!=null && tbItemParamItems.size()>0){
+                redisClient.set(ITEM_INFO + ":" + itemId + ":" + PARAM,tbItemParamItems.get(0));
+                redisClient.expire(ITEM_INFO + ":" + itemId + ":" + PARAM,ITEM_INFO_EXPIRE);
+
+            }else{
+                //解决穿透问题  没有值也存一个null
+                redisClient.set(ITEM_INFO + ":" + itemId + ":" + PARAM,null);
+                redisClient.expire(ITEM_INFO + ":" + itemId + ":" + PARAM,30);
+            }
+            redisClient.del("SETNX_ITEM_PARAM_KEY"+":"+itemId);
+            return tbItemParamItems.get(0);
+        }else{
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            return selectTbItemParamItemByItemId(itemId);
+        }
+
     }
 
 

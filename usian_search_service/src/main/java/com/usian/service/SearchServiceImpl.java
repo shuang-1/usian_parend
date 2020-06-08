@@ -128,7 +128,7 @@ public class SearchServiceImpl implements SearchService {
                 "    }\n" +
                 "    \n" +
                 "  }\n" +
-                "}", JSON);
+                "}", XContentType.JSON);
         restHighLevelClient.indices().create(createIndexRequest,RequestOptions.DEFAULT);
     }
 

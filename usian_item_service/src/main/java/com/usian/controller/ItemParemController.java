@@ -1,13 +1,12 @@
 package com.usian.controller;
 
 import com.usian.pojo.TbItemParam;
+import com.usian.pojo.TbItemParamItem;
 import com.usian.service.ItemParamService;
 import com.usian.utils.PageResult;
-import com.usian.utils.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -42,5 +41,10 @@ public class ItemParemController {
     @RequestMapping("/deleteItemParamById")
     public Integer deleteItemParamById(Integer id){
         return itemParamService.deleteItemParamById(id);
+    }
+
+    @RequestMapping("/selectTbItemParamItemByItemId")
+    public TbItemParamItem selectTbItemParamItemByItemId(Long itemId){
+        return itemParamService.selectTbItemParamItemByItemId(itemId);
     }
 }

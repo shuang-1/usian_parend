@@ -1,6 +1,5 @@
 package com.usian.redis;
 
-import io.lettuce.core.models.role.RedisSentinelInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
@@ -133,6 +132,22 @@ public class RedisClient {
      */
     public long lrem(String key,long count,Object value) {
        return redisTemplate.opsForList().remove(key, count, value);
+    }
+
+    /**
+     * 分布式锁
+     * @param key
+     * @param count
+     * @param value
+     * @return
+     */
+    public Boolean setnx(String key, Object value, long count) {
+        try {
+            return redisTemplate.opsForValue().setIfAbsent(key, value, count, TimeUnit.SECONDS);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
 

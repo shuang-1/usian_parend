@@ -7,10 +7,12 @@ import com.usian.mapper.TbItemDescMapper;
 import com.usian.mapper.TbItemMapper;
 import com.usian.mapper.TbItemParamItemMapper;
 import com.usian.pojo.*;
+import com.usian.redis.RedisClient;
 import com.usian.utils.IDUtils;
 import com.usian.utils.PageResult;
 import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,9 +40,59 @@ public class ItemServiceImpl implements ItemService {
     @Autowired
     private TbItemCatMapper tbItemCatMapper;
 
+    @Autowired
+    private RedisClient redisClient;
+
+    @Value("${ITEM_INFO}")
+    private String ITEM_INFO;
+
+    @Value("${BASE}")
+    private String BASE;
+
+    @Value("${DESC}")
+    private String DESC;
+
+    @Value("${PARAM}")
+    private String PARAM;
+
+    @Value("${ITEM_INFO_EXPIRE}")
+    private Integer ITEM_INFO_EXPIRE;
+
     @Override
-    public TbItem selectItemInfo(Long itemId){
-        return tbItemMapper.selectByPrimaryKey(itemId);
+    public TbItem selectItemInfo(Long itemId) {
+        //从redis查询数据
+        TbItem tbItem = (TbItem) redisClient.get(ITEM_INFO +":"+ itemId +":"+ BASE);
+        if(tbItem!=null){
+            return tbItem;
+        }
+        //如果没有从数据库查询
+        tbItem = tbItemMapper.selectByPrimaryKey(itemId);
+
+        /**
+         * 缓存的击穿
+         */
+        if(redisClient.setnx("SETNX_ITEM_LOCK_KEY"+":"+itemId,itemId,30)){
+            //缓存的穿透
+            if(tbItem!=null){
+                //存入redis
+                redisClient.set(ITEM_INFO +":"+ itemId +":"+ BASE,tbItem);
+                redisClient.expire(ITEM_INFO +":"+ itemId +":"+ BASE,ITEM_INFO_EXPIRE);
+            }else{
+                //存入redis
+                redisClient.set(ITEM_INFO +":"+ itemId +":"+ BASE,null);
+                redisClient.expire(ITEM_INFO +":"+ itemId +":"+ BASE,30);
+            }
+            redisClient.del("SETNX_ITEM_LOCK_KEY"+":"+itemId);
+            return tbItem;
+        }else{
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            return selectItemInfo(itemId);
+        }
+
     }
 
     @Override
@@ -154,13 +206,58 @@ public class ItemServiceImpl implements ItemService {
         tbItemParamItem.setParamData(itemParams);
         Integer itemParamItemNum = tbItemParamItemMapper.updateByExampleSelective(tbItemParamItem,tbItemParamItemExample);
 
+        redisClient.del(ITEM_INFO+":"+tbItem.getId()+":"+BASE);
+        redisClient.del(ITEM_INFO+":"+tbItem.getId()+":"+DESC);
+        redisClient.del(ITEM_INFO+":"+tbItem.getId()+":"+PARAM);
+
         return tbitemNum+tbitemDescNum+itemParamItemNum;
+    }
+
+    @Override
+    public TbItemDesc selectItemDescByItemId(Long itemId) {
+        //从redis查询
+        TbItemDesc tbItemDesc = (TbItemDesc) redisClient.get(ITEM_INFO + ":" + itemId + ":" + DESC);
+        if(tbItemDesc!=null){
+            return tbItemDesc;
+        }
+        //如果没有从数据库查询
+        tbItemDesc = tbItemDescMapper.selectByPrimaryKey(itemId);
+        /**
+         * 缓存的击穿
+         */
+        if(redisClient.setnx("SETNX_ITEM_DESC_KEY"+":"+itemId,itemId,30)){
+            //缓存穿透
+            if(tbItemDesc!=null){
+                //存入redis
+                redisClient.set(ITEM_INFO + ":" + itemId + ":" + DESC,tbItemDesc);
+                redisClient.expire(ITEM_INFO + ":" + itemId + ":" + DESC,ITEM_INFO_EXPIRE);
+            }else{
+                //存入redis
+                redisClient.set(ITEM_INFO + ":" + itemId + ":" + DESC,null);
+                redisClient.expire(ITEM_INFO + ":" + itemId + ":" + DESC,30);
+            }
+            redisClient.del("SETNX_ITEM_DESC_KEY"+":"+itemId);
+            return tbItemDesc;
+        }else{
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            return selectItemDescByItemId(itemId);
+        }
+
     }
 
     @Override
     public Integer deleteItemById(Long itemId) {
 
         Integer num = tbItemMapper.deleteByPrimaryKey(itemId);
+
+        redisClient.del(ITEM_INFO+":"+itemId+":"+BASE);
+        redisClient.del(ITEM_INFO+":"+itemId+":"+DESC);
+        redisClient.del(ITEM_INFO+":"+itemId+":"+PARAM);
+
         return num;
     }
 
