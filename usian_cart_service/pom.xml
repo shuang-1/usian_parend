@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>usian_sso_service</artifactId>
+    <artifactId>usian_cart_service</artifactId>
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>

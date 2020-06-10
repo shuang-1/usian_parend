@@ -68,8 +68,14 @@ public class RedisClient {
     }
 
     //hash的存数据
-    public void hset(String key,String item,Object value) {
-        redisTemplate.opsForHash().put(key, item, value);
+    public Boolean hset(String key,String item,Object value) {
+        try {
+            redisTemplate.opsForHash().put(key, item, value);
+            return true;
+        }catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
     }
 
     //删除hash中的数据
