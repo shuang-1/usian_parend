@@ -8,4 +8,5 @@ public interface CartService {
     Map<String, TbItem> getCartFromRedis(String userId);
 
     Boolean addCartToRedis(Map<String, TbItem> map, String userId);
+
 }

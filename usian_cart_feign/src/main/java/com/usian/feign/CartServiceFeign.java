@@ -15,4 +15,5 @@ public interface CartServiceFeign {
 
     @RequestMapping("/service/cart/addCartToRedis")
     Boolean addCartToRedis(Map<String, TbItem> map, @RequestParam String userId);
+
 }

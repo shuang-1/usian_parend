@@ -53,6 +53,8 @@ public class CartController {
                 //登录状态
                 //从redis中查询购物车列表是否存在
                 Map<String,TbItem> map = getCartFromRedis(userId);
+                //获取cookie中的商品列表
+                Map<String, TbItem> cart = getCart(request);
                 //加入购物车
                 addItemToCart(itemId,map,num);
                 //把购物车列表加入redis缓存中
