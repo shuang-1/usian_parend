@@ -7,3 +7,6 @@ eureka:
   client:
     service-url:
       defaultZone: http://127.0.0.1:8761/eureka/
+ribbon:
+  ConnecTimeOut: 6000
+  ReadTimeOut: 6000

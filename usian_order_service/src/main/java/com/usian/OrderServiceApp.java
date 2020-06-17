@@ -8,8 +8,8 @@ import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 @SpringBootApplication
 @EnableEurekaClient
 @MapperScan("com.usian.mapper")
-public class OrderWebApp {
+public class OrderServiceApp {
     public static void main(String[] args) {
-        SpringApplication.run(OrderWebApp.class,args);
+        SpringApplication.run(OrderServiceApp.class,args);
     }
 }

@@ -1,4 +1,4 @@
-package com.usian.com.usian.config;
+package com.usian.config;
 
 import com.usian.interceptor.UserLoginInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
