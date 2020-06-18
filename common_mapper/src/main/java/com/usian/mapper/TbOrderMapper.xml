@@ -398,4 +398,8 @@
       buyer_rate = #{buyerRate,jdbcType=INTEGER}
     where order_id = #{orderId,jdbcType=VARCHAR}
   </update>
+
+  <select id="selectOverTbOrder" resultMap="BaseResultMap">
+    select * from tb_order where create_time &lt;= date_sub(now(),interval 2 day) and payment_type=1 and status=1
+  </select>
 </mapper>
