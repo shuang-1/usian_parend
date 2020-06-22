@@ -28,6 +28,10 @@ spring:
     username: admin
     password: 1111
     virtual-host: /
+    #设置三种订阅模式手动ack
+    listener:
+     direct:
+      acknowledge-mode: manual
 eureka:
   client:
     service-url:

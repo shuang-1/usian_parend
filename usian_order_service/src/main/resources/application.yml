@@ -29,6 +29,8 @@ spring:
     virtual-host: /
     username: admin
     password: 1111
+    publisher-confirms: true #开启消息确认机制
+    publisher-returns: true #开启发送失败退回
 eureka:
   client:
     service-url:
@@ -36,3 +38,4 @@ eureka:
 #订单
 ORDER_ID_KEY: ORDER_ID_KEY
 ORDER_ID_BEGIN: 100544
+
