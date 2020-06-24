@@ -1,0 +1,43 @@
+spring:
+  application:
+    name: common-zuul
+server:
+  port: 7070
+eureka:
+  client:
+    service-url:
+      defaultZone: http://127.0.0.1:8761/eureka/
+zuul:
+  ignred-services: '*' #忽略的服务，多个可以用*
+  sensitive-headers: true #全局配置，解决在网关服务中不传递请求头的问题
+  routes:
+    usian-item-web:
+      path: /backend_item/**
+    usian-conten-web:
+      path: /backend_content/**
+    usian-search-web:
+      path: /frontent-search/**
+    usian-portal-web:
+      path: /frontend_portal/**
+    usian-detail-web:
+      path: /frontend_detail/**
+    usian-sso-web:
+      path: /frontend_sso/**
+    usian-cart-web:
+      path: /frontend_cart/**
+    usian-order-web:
+      path: /frontend_order/**
+
+#第一层，hystrix超时时间
+hystrix:
+  commmand:
+    default:
+      execution:
+        isslation:
+          thread:
+            timeoutInMilliseconds: 8000 #默认情况下是线程池隔离，超时时间 1000ms
+#第二层，bibbon超时时间：比第一层小
+ribbon:
+    ConnectOutTime: 5000 #请求超时时间
+    ReadOutTime: 5000 #请求处理超时时间
+

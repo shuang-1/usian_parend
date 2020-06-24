@@ -134,6 +134,75 @@
         上游服务消息发送成功
         下游服务消息消费成功
         对消息幂等
+2020-06-22
+    1、分布式日志
+        ELK是Elasticsearch,logstash, kibana
+        Elasticsearch:是开源的分布式全文检索服务器
+        logstash：解析日志，并发送数据到ES
+        kibana:数据分析
+    2、安装Logstash
+        修改配置文件vim config/log_to_es.conf   启动
+    3、springcloud 集成elk
+        在pom.xml引入  logstash-logback-encoder
+        在logback.xml进行修改  指定logstash的端口和ip
+    4、测试
+        通过kibana分析日志
+2020-06-24
+    1、主从复制
+	    安装mysql
+		a、解压
+			tar -zxvf mysql-5.6.31-linux-glibc2.5-x86_64.tar.gz -C /usr/java
+			mv mysql-5.6.31-linux-glibc2.5-x86_64 mysql
+                b、拷贝配置文件到etc
+			cp support-files/my-default.cnf /etc/my.cnf
+			cp support-files/mysql.server /etc/rc.d/init.d/mysql
+			vim /etc/my.cnf
+				basedir = /usr/java/mysql
+				datadir = /usr/java/mysql/data
+				log-error = /usr/java/mysql/data/error.log
+				pid-file = /usr/java/mysql/data/mysql.pid
+				user = root
+				tmpdir = /tmp
+		c、初始化mysql
+			./scripts/mysql_install_db --user=root --basedir=/usr/java/mysql --datadir=/usr/java/mysql/data --pid-file=/usr/java/mysql/data/mysql.pid --tmpdir=/tmp
+
+		d、配置mysql命令支持
+			ln -s /usr/java/mysql/bin/mysql /usr/bin/mysql
+		e、修改密码
+			mysql -u root
+			use mysql;
+			update user set password= password("1111") where user='root';
+			flush privileges;
+		f、开启远程登录权限
+			GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY '1111' WITH GRANT OPTION;
+			flush privileges;
+		g、设置开机启动
+			chkconfig mysql on
+		d、启动和关闭mysql
+			service mysql start|stop|restart
+
+	2、配置mysql主从复制
+		a、配置主数据库
+			开启日志、修改server_id
+				vim /etc/my.cnf：
+					log_bin=master_log
+					server_id=1
+
+		b、配置从数据库
+			修改server_id：
+				vim /etc/my.cnf：
+					server_id=1
+			修改uuid：
+				vim mysql/data/auto.cnf：
+					uuid=xxxxxxxxx
+			重启：
+				service mysql restart
+		c、修改slave
+				mysql> change master to master_host='192.168.204.139',master_user='root',master_password='1111',master_log_file='master_log.00001'
+
+		d、查看主从状态
+			mysql> show slave status \G;
+
 
 
 
