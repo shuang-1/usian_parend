@@ -202,6 +202,27 @@
 
 		d、查看主从状态
 			mysql> show slave status \G;
+    3、什么是MyCat？
+    		是一个国产的数据库中间件，前身是阿里的cobar。
+    	3.1、分库分表
+    		分库：把usian拆成多个库
+    		分表：把tb_order拆分到多个库里
+
+    	3.2、mycat的核心概念
+    		schema：逻辑上完整的库
+    		table：逻辑上完整的表
+    		dataHost：服务器
+    		dataNode：服务器上的mysql
+    		rule：分片规则
+    	3.3、分片规则
+    		crc32slot规则：
+    			分片字段使用主键
+    			tableRule：一个表一个
+    			数据库节点数量
+    	3.4、配置mycat的分库分表和读写分离
+    		a、schema.xml作用：逻辑库、逻辑表、dataNode、分片规则
+    		b、rule.xml：分片规则
+    		c、server.xml：mycat的用户名、密码和权限
 
 
 
