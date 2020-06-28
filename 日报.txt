@@ -223,6 +223,29 @@
     		a、schema.xml作用：逻辑库、逻辑表、dataNode、分片规则
     		b、rule.xml：分片规则
     		c、server.xml：mycat的用户名、密码和权限
+2020-06-28
+    1、swagger
+        是一个实现了OpenAPI规范的工具集，用于生成API文档并提供可视化 RESTful 风格的 Web 服务。
+        OpenAPI规范（OpenAPI Specification 简称OAS）是Linux基金会的一个项目，试图通过定义一种用来描述API格式或API定义的语言，
+        来规范RESTful服务开发过程。目前V3.0版本的OpenAPI规范已经发布并开源在github上
+      为什么使用swagger？
+        随着互联网技术的发展，现在的网站架构基本都由原来的后端渲染，变成了：前端渲染、前后端分离的形态，而且前端技术和后端技术在各自的道路上越走越远。 
+        前端和后端的唯一联系，变成了API接口；API文档变成了前后端开发人员联系的纽带，变得越来越重要。
+        没有API文档工具之前，大家都是手写API文档的，在什么地方书写的都有，而且API文档没有统一规范和格式，每个公司都不一样
+      常用的注解
+         @Api：修饰整个类，描述Controller的作用
+         @ApiOperation：描述一个类的一个方法，或者说一个接口
+         @ApiParam：单个参数描述
+         @ApiImplicitParam：单个参数描述
+         @ApiImplicitParams：多个参数描述
+         @ApiModel：用对象来接收参数
+         @ApiModelProperty：用对象接收参数时，描述对象的一个字段
+         @ApiResponse：HTTP响应其中1个描述
+         @ApiResponses：HTTP响应整体描述
+    2、网关服务
+        需求    路由：所有的请求都通过网关服务的consumer
+                容错：客户端通过zuul无法调用consumer时，使用zuul对consumer进行降级
+                限流：使用令牌桶算法实现zuul对consumer的限流
 
 
 
