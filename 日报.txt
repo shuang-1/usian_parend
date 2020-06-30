@@ -246,6 +246,13 @@
         需求    路由：所有的请求都通过网关服务的consumer
                 容错：客户端通过zuul无法调用consumer时，使用zuul对consumer进行降级
                 限流：使用令牌桶算法实现zuul对consumer的限流
+2020-06-29
+    1、分布式配置中心config
+        创建仓库  上传item服务提供者和服务消费者的配置文件
+        搭建工程  在服务提供者和服务消费者加bootstrap.yml配置文件
+    2、消息总线bus
+        当github的配置文件修改时重启服务器就可以同步
+
 
 
 

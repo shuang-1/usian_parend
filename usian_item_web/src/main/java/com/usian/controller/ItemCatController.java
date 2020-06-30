@@ -1,4 +1,4 @@
-package com.usian.comtroller;
+package com.usian.controller;
 
 import com.usian.feign.ItemServiceFeignClient;
 import com.usian.pojo.TbItemCat;
